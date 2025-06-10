@@ -7,32 +7,32 @@
     <div v-else class="calendar">
       <div v-if="groupedWorkouts.length" class="calendar-view">
         <div
-          v-for="group in groupedWorkouts"
-          :key="group.date"
-          class="day-section"
+            v-for="group in groupedWorkouts"
+            :key="group.date"
+            class="day-section"
         >
           <h2 class="day-title">{{ group.date }}</h2>
           <div class="workout-grid">
             <div
-              v-for="workout in group.workouts"
-              :key="workout.id"
-              class="workout-card"
+                v-for="workout in group.workouts"
+                :key="workout.id"
+                class="workout-card"
             >
               <div class="workout-header">
                 <span class="type">{{ workout.type }}</span>
                 <span class="time">{{ formatTime(workout.workoutDate) }}</span>
               </div>
               <div class="detail">
-                <strong>Coach:</strong> {{ workout.coach.coachName }}
+                <strong>Тренер:</strong> {{ workout.coach.coachName }}
                 {{ workout.coach.coachSurname }}
               </div>
               <div class="detail">
-                <strong>Field:</strong> {{ workout.field.name }}
+                <strong>Напрямок:</strong> {{ workout.field.name }}
               </div>
               <button
-                v-if="workout.type === 'PERSONAL'"
-                class="cancel-btn"
-                @click="openCancelModal(workout.id)"
+                  v-if="workout.type === 'PERSONAL'"
+                  class="cancel-btn"
+                  @click="openCancelModal(workout.id)"
               >
                 Відмінити
               </button>
@@ -44,9 +44,9 @@
     </div>
 
     <CustomModal
-      :visible="showConfirmModal"
-      title="Впевнені?"
-      @close="showConfirmModal = false"
+        :visible="showConfirmModal"
+        title="Впевнені?"
+        @close="showConfirmModal = false"
     >
       <template #default>
         <p>Все ще бажаєте відмінити тренування?</p>
@@ -61,9 +61,9 @@
     </CustomModal>
 
     <CustomModal
-      :visible="showResultModal"
-      title="Сповіщення"
-      @close="showResultModal = false"
+        :visible="showResultModal"
+        title="Сповіщення"
+        @close="showResultModal = false"
     >
       <template #default>
         <p>{{ resultMessage }}</p>
@@ -109,13 +109,13 @@ const cancelWorkout = async (id) => {
   try {
     await axios.post(`/gymfit/booking/cancel/${selectedWorkoutId.value}`);
     workouts.value = workouts.value.filter(
-      (w) => w.id !== selectedWorkoutId.value,
+        (w) => w.id !== selectedWorkoutId.value,
     );
     resultMessage.value = "Трнування успішно відмінено!";
   } catch (err) {
     console.error(err);
     resultMessage.value =
-      "На жаль, не вдалося вцідмінити тренування. Спробуйте ще раз!.";
+        "На жаль, не вдалося вцідмінити тренування. Спробуйте ще раз!.";
   } finally {
     showConfirmModal.value = false;
     showResultModal.value = true;

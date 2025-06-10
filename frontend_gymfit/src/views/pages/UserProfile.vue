@@ -34,7 +34,7 @@
         <div class="gym-info">
           <span class="label">Абонементи доступу до спортзалу: </span>
           <span
-            :class="{
+              :class="{
               active: client.gymMembership,
               inactive: !client.gymMembership,
             }"
@@ -82,7 +82,7 @@
     <div class="accordion" @click="toggleAccordion('group')">
       <div class="accordion-header">
         <span
-          >Абонементи групових тренувань({{
+        >Абонементи групових тренувань({{
             client.groupMemberships.length
           }})</span
         >
@@ -90,13 +90,14 @@
       </div>
       <div v-if="isGroupOpen" class="accordion-body">
         <div
-          class="membership-card"
-          v-for="g in client.groupMemberships"
-          :key="g.id"
+            class="membership-card"
+            v-for="g in client.groupMemberships"
+            :key="g.id"
         >
           <h3>{{ g.fieldName }}</h3>
           <div class="info-row">
-            <span class="label">Тип:</span> <span>{{ g.type }}</span>
+            <span class="label">Тип:</span>
+            <span>{{ formatMembershipType(g.type) }}</span>
           </div>
           <div class="info-row">
             <span class="label">Тренер:</span>
@@ -105,8 +106,8 @@
           <div class="info-row">
             <span class="label">к-сть занять:</span>
             <span>{{
-              g.leftWorkoutAmount + "/" + g.initialWorkoutAmount
-            }}</span>
+                g.leftWorkoutAmount + "/" + g.initialWorkoutAmount
+              }}</span>
           </div>
           <div class="info-row">
             <span class="label">Дійсний до:</span>
@@ -119,7 +120,7 @@
     <div class="accordion" @click="toggleAccordion('personal')">
       <div class="accordion-header">
         <span
-          >Абонементи персональних тренувань ({{
+        >Абонементи персональних тренувань ({{
             client.personalMemberships.length
           }})</span
         >
@@ -127,13 +128,14 @@
       </div>
       <div v-if="isPersonalOpen" class="accordion-body">
         <div
-          class="membership-card"
-          v-for="p in client.personalMemberships"
-          :key="p.id"
+            class="membership-card"
+            v-for="p in client.personalMemberships"
+            :key="p.id"
         >
           <h3>{{ p.fieldName }}</h3>
           <div class="info-row">
-            <span class="label">Тип:</span> <span>{{ p.type }}</span>
+            <span class="label">Тип:</span>
+            <span>{{ formatMembershipType(p.type) }}</span>
           </div>
           <div class="info-row">
             <span class="label">Тренер:</span>
@@ -142,8 +144,8 @@
           <div class="info-row">
             <span class="label">К-сть занять:</span>
             <span>{{
-              p.leftWorkoutAmount + "/" + p.initialWorkoutAmount
-            }}</span>
+                p.leftWorkoutAmount + "/" + p.initialWorkoutAmount
+              }}</span>
           </div>
           <div class="info-row">
             <span class="label">Дійсний до:</span>
@@ -165,14 +167,14 @@
             <h3>{{ t.coach.name }} {{ t.coach.surname }}</h3>
             <div class="session-count">
               <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="icon"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="icon"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
               >
                 <circle cx="12" cy="12" r="10"></circle>
                 <polyline points="12 6 12 12 16 14"></polyline>
@@ -181,21 +183,21 @@
             </div>
             <div class="button-group">
               <button
-                class="unenroll-btn"
-                @click="unenrollCoach(t.coach.id)"
-                :disabled="!canUnenroll(t.endDate)"
+                  class="unenroll-btn"
+                  @click="unenrollCoach(t.coach.id)"
+                  :disabled="!canUnenroll(t.endDate)"
               >
                 Відписатися
               </button>
               <button
-                @click="
+                  @click="
                   goToMemberships(
                     `${t.coach.name} ${t.coach.surname} `,
                     'PERSONAL',
                     '',
                   )
                 "
-                class="extend-btn"
+                  class="extend-btn"
               >
                 Продовжити
               </button>
@@ -212,22 +214,22 @@
       </div>
       <div v-if="isClassesOpen" class="accordion-body group-classes-body">
         <div
-          class="class-card"
-          v-for="g in client.enrolledGroupClasses"
-          :key="g.groupClass.id"
+            class="class-card"
+            v-for="g in client.enrolledGroupClasses"
+            :key="g.groupClass.id"
         >
           <div class="class-header">
             <h3>{{ g.groupClass.fieldName }}</h3>
             <div class="session-count">
               <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="icon"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="icon"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
               >
                 <circle cx="12" cy="12" r="10"></circle>
                 <polyline points="12 6 12 12 16 14"></polyline>
@@ -241,10 +243,10 @@
           </p>
           <div class="button-group">
             <button
-              @click="unenrollGroup(g.groupClass.id)"
-              class="unenroll-btn"
-              :disabled="!canUnenroll(g.endDate)"
-              :title="
+                @click="unenrollGroup(g.groupClass.id)"
+                class="unenroll-btn"
+                :disabled="!canUnenroll(g.endDate)"
+                :title="
                 g.canUnenroll
                   ? 'Unenroll from this class'
                   : 'You cannot unenroll yet'
@@ -253,14 +255,14 @@
               Відписатися
             </button>
             <button
-              @click="
+                @click="
                 goToMemberships(
                   `${g.groupClass.coachName} ${g.groupClass.coachSurname} `,
                   'GROUP',
                   g.fieldName,
                 )
               "
-              class="extend-btn"
+                class="extend-btn"
             >
               Продовжити
             </button>
@@ -302,6 +304,15 @@ const passTypeMap = {
   MORNING_PASS: "Ранковий (6:00 - 13:00)",
   EVENING_PASS: "Вечірній (13:00 - 22:00)",
   ALL_DAY_PASS: "Цілодобовий (6:00 - 22:00)",
+};
+
+const formatMembershipType = (membershipType) => {
+  const membershipMap = {
+    PERSONAL: "Персональні",
+    GROUP: "Групові",
+    GYM_ACCESS: "Доступ до спортзалу",
+  };
+  return membershipMap[membershipType.toUpperCase()] || membershipType;
 };
 
 const passTypeId = {

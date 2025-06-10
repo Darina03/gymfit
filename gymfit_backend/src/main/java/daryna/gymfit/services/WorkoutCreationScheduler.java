@@ -7,6 +7,7 @@ import daryna.gymfit.entities.enums.WorkoutType;
 import lombok.AllArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -25,10 +26,11 @@ public class WorkoutCreationScheduler {
     private final CoachService coachService;
     private final GroupClassService groupClassService;
 
+    @Transactional
     @Scheduled(cron = "0 0 0 * * ?")
     public void createWorkoutsForCoaches() {
 
-        LocalDate targetDate = LocalDate.now().plusMonths(4);
+        LocalDate targetDate = LocalDate.now().plusWeeks(4);
         DayOfWeek day = targetDate.getDayOfWeek();
         if (day == DayOfWeek.SATURDAY || day == DayOfWeek.SUNDAY) return;
 

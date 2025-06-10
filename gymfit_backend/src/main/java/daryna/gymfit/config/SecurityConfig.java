@@ -36,7 +36,7 @@ public class SecurityConfig {
                                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                                 .requestMatchers("/gymfit/coach-membership-templates/all").permitAll()
                                 .requestMatchers("/gymfit/group-classes/all").permitAll()
-                                .requestMatchers("/gymfit/checkout/stripe/webhook").hasRole("CLIENT")
+                                .requestMatchers("/gymfit/checkout/stripe/webhook").permitAll()
                                 .requestMatchers("/gymfit/coaches/**").permitAll()
                                 .requestMatchers("/gymfit/auth/**").permitAll()
                                 .requestMatchers("/gymfit/discounts/**").permitAll()

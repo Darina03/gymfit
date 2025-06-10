@@ -30,24 +30,24 @@
           </div>
 
           <div v-if="item.schedules" class="info-line">
-            <span class="label">Дні тренувань:</span>
+            <span class="label">Дні занять:</span>
             <span class="value">{{ formatWorkoutDates(item.schedules) }}</span>
           </div>
 
           <div v-if="item.coachName" class="info-line">
             <span class="label">Тренер:</span>
             <span class="value">{{
-              item.coachName + " " + item.coachSurname
-            }}</span>
+                item.coachName + " " + item.coachSurname
+              }}</span>
           </div>
           <div class="info-line">
             <span class="label">Ціна (1 шт):</span>
             <span class="value">
-              <span v-if="item.discountedPrice !== null">
+              <span v-if="activeDiscounts.length !== 0">
                 <span class="old-price">₴{{ item.price.toFixed(2) }}</span>
                 <span class="discounted-price">{{
-                  item.discountedPrice.toFixed(2)
-                }}</span>
+                    item.discountedPrice.toFixed(2)
+                  }}</span>
               </span>
               <span v-else>₴{{ item.price.toFixed(2) }}</span>
             </span>
@@ -62,12 +62,12 @@
           </div>
           <p class="total-item-price">
             =
-            <span v-if="item.discountedPrice !== null">
+            <span v-if="activeDiscounts.length !== 0">
               <span class="old-price"
-                >₴{{ (item.price * item.quantity).toFixed(2) }}</span
+              >₴{{ (item.price * item.quantity).toFixed(2) }}</span
               >
               <span class="discounted-price"
-                >₴{{ (item.discountedPrice * item.quantity).toFixed(2) }}</span
+              >₴{{ (item.discountedPrice * item.quantity).toFixed(2) }}</span
               >
             </span>
             <span v-else> ₴{{ (item.price * item.quantity).toFixed(2) }} </span>
@@ -75,8 +75,8 @@
         </div>
       </div>
       <div
-        class="discount-combined"
-        v-if="activeDiscounts.length || !appliedDiscount"
+          class="discount-combined"
+          v-if="activeDiscounts.length || !appliedDiscount"
       >
         <div class="discount-section" v-if="activeDiscounts.length">
           <h3>Застосовані знижки</h3>
@@ -91,9 +91,9 @@
           <div class="discount-controls">
             <div class="input-group">
               <input
-                v-model="promoCode"
-                :disabled="appliedDiscount"
-                placeholder="Введіть промокод"
+                  v-model="promoCode"
+                  :disabled="appliedDiscount"
+                  placeholder="Введіть промокод"
               />
               <button @click="applyDiscount" :disabled="appliedDiscount">
                 Застосувати
@@ -110,7 +110,7 @@
         <h3>
           Сума:
           <span v-if="activeDiscounts.length !== 0" class="old-price"
-            >₴{{ total.toFixed(2) }}</span
+          >₴{{ total.toFixed(2) }}</span
           >
           <span class="final-price">₴{{ discountedTotal.toFixed(2) }}</span>
         </h3>
@@ -123,9 +123,9 @@
       </div>
     </div>
     <CustomModal
-      :visible="showModal"
-      title="Помилка"
-      @close="showModal = false"
+        :visible="showModal"
+        title="Помилка"
+        @close="showModal = false"
     >
       <p>{{ modalMessage }}</p>
     </CustomModal>
@@ -162,7 +162,7 @@ const decreaseQuantity = (index) => {
 };
 
 const total = computed(() =>
-  cartItems.value.reduce((sum, item) => sum + item.price * item.quantity, 0),
+    cartItems.value.reduce((sum, item) => sum + item.price * item.quantity, 0),
 );
 
 const discountedTotal = computed(() => {
@@ -188,18 +188,19 @@ const findApplicableDiscounts = async () => {
 onMounted(findApplicableDiscounts);
 
 const applyDiscountsForMemberships = () => {
-  activeDiscounts.value.forEach((discount) => {
-    discount.applicableItemIds.forEach((discountItemId) => {
-      const matchingItem = cartItems.value.find(
-        (item) => item.id === discountItemId,
-      );
-      if (matchingItem) {
+  cartItems.value.forEach((item) => {
+    let currentPrice = item.price;
+
+    activeDiscounts.value.forEach((discount) => {
+      if (discount.applicableItemIds.includes(item.id)) {
         const discountMultiplier = 1 - discount.discountPercent / 100;
-        matchingItem.discountedPrice = parseFloat(
-          (matchingItem.price * discountMultiplier).toFixed(2),
+        currentPrice = parseFloat(
+            (currentPrice * discountMultiplier).toFixed(2),
         );
       }
     });
+
+    item.discountedPrice = currentPrice;
   });
 };
 
@@ -238,9 +239,9 @@ const applyDiscount = async () => {
 
 const formatMembershipType = (membershipType) => {
   const membershipMap = {
-    PERSONAL: "Personal",
-    GROUP: "Group",
-    GYM_ACCESS: "Gym Access",
+    PERSONAL: "Персональні",
+    GROUP: "Групові",
+    GYM_ACCESS: "Доступ до спортзалу",
   };
   return membershipMap[membershipType.toUpperCase()] || membershipType;
 };
@@ -268,11 +269,11 @@ const formatWorkoutDates = (schedules) => {
   if (!Array.isArray(schedules)) return "";
 
   return schedules
-    .map(
-      (s) =>
-        `${dayMapFull[s.scheduledDay.toUpperCase()] || s.scheduledDay} ${s.classTime?.slice(0, 5) || ""}`,
-    )
-    .join(", ");
+      .map(
+          (s) =>
+              `${dayMapFull[s.scheduledDay.toUpperCase()] || s.scheduledDay} ${s.classTime?.slice(0, 5) || ""}`,
+      )
+      .join(", ");
 };
 
 const mapCartItemsForDiscountCheck = (items) => {
@@ -281,7 +282,7 @@ const mapCartItemsForDiscountCheck = (items) => {
     membershipType: item.membershipType,
     passType: item.passType || null,
     quantity: item.quantity || 1,
-    price: item.price || null,
+    price: item.discountedPrice != null ? item.discountedPrice : item.price,
     discountedPrice: null,
   }));
 };
@@ -292,7 +293,7 @@ const mapCartItemsForCheckout = (items) => {
     membershipType: item.membershipType,
     passType: item.passType || null,
     quantity: item.quantity || 1,
-    price: item.discountedPrice ? item.discountedPrice : item.price,
+    price: item.discountedPrice != null ? item.discountedPrice : item.price,
     discountedPrice: null,
   }));
 };
@@ -432,9 +433,9 @@ h1 {
 
   &:hover {
     background: linear-gradient(
-      135deg,
-      lighten($fit-highlight, 10%) 0%,
-      lighten(#017e7d, 10%) 100%
+            135deg,
+            lighten($fit-highlight, 10%) 0%,
+            lighten(#017e7d, 10%) 100%
     );
   }
 }

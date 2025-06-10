@@ -88,5 +88,10 @@ public class Coach {
     )
     private List<Client> clients;
 
-
+    @Override
+    public String toString() {
+        return "Coach{" +
+                "id=" + id +
+                '}';
+    }
 }

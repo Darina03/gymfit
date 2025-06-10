@@ -4,18 +4,24 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.PostConstruct;
+import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
-
 @Service
 public class JwtService {
     @Value("${jwt.key.string}")
-    String secretKeyString;
-    SecretKey secretKey = Keys.hmacShaKeyFor(secretKeyString.getBytes());
+    private String secretKeyString;
+    private SecretKey secretKey;
 
+    @PostConstruct
+    public void init() {
+        this.secretKey = Keys.hmacShaKeyFor(secretKeyString.getBytes());
+    }
     public String generateToken(String email, String role,Long clientId) {
         return Jwts.builder()
                 .setSubject(email)

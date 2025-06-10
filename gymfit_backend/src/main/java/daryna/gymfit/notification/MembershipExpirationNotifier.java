@@ -7,6 +7,7 @@ import daryna.gymfit.services.MembershipService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -19,10 +20,10 @@ public class MembershipExpirationNotifier {
     private final MembershipService membershipService;
     private final NotificationService notificationService;
 
-    @Scheduled(cron = "0 0 8 * * *")
+    @Transactional
+    @Scheduled(cron = "0 34 23 * * *")
     public void notifyCoachMembershipClients() {
         List<Membership> expiringMemberships = membershipService.findExpiringOn(LocalDate.now().plusDays(3));
-
         expiringMemberships.forEach(notificationService::sendExpirationReminder);
 
     }

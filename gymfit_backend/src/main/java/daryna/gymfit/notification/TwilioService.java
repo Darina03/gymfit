@@ -18,16 +18,20 @@ public class TwilioService implements NotificationService {
 
     @Override
     public void sendExpirationReminder(Membership membership) {
+
+        String formattedNumber = membership.getClient().getPhoneNumber().replaceAll("[^\\d+]", "")
+                .replaceFirst("^\\+?38", "+380");
+
         String type = switch (membership.getType()) {
             case PERSONAL -> "персональні";
             case GROUP -> "групові";
         };
         Coach coach = membership.getCoachMembershipTemplate().getCoach();
         Client client = membership.getClient();
-        String messageBody = String.format("Привіт, %s! Нагадуємо, що ваш абонемент на %s тренування з %s під керівництвом %s закінчиться через 3 дні. Поспіши придбати новий 💪!",
-                client.getName(),type, membership.getCoachMembershipTemplate().getField().getName(), coach.getName() + " " + coach.getSurname());
+        String messageBody = String.format("Привіт, %s! Нагадуємо, що ваш абонемент на %s тренування з %s під керівництвом %s закінчиться через 3 дні!",
+                client.getName(), type, membership.getCoachMembershipTemplate().getField().getName(), coach.getName() + " " + coach.getSurname());
         Message message = Message.creator(
-                new PhoneNumber(membership.getClient().getPhoneNumber()),
+                new PhoneNumber(formattedNumber),
                 new PhoneNumber(twilioPhoneNumber),
                 messageBody
         ).create();
@@ -40,7 +44,7 @@ public class TwilioService implements NotificationService {
         Client client = membership.getClient();
 
         String messageBody = String.format("Привіт, %s! Нагадуємо, що ваш абонемент доступу до спортзалу закінчиться через 3 дні." +
-                " Поспіши придбати новий 💪!",client.getName());
+                " Поспіши придбати новий 💪!", client.getName());
         Message message = Message.creator(
                 new PhoneNumber(membership.getClient().getPhoneNumber()),
                 new PhoneNumber(twilioPhoneNumber),

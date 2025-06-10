@@ -5,15 +5,15 @@
 
       <label for="coach">Оберіть споміж ваших абонементів:</label>
       <select
-        id="coach"
-        v-model="selectedMembership"
-        @change="generateNextDates"
+          id="coach"
+          v-model="selectedMembership"
+          @change="generateNextDates"
       >
         <option value="" disabled>Оберіть абонемент</option>
         <option
-          v-for="membership in memberships"
-          :key="membership.coach.id"
-          :value="membership"
+            v-for="membership in memberships"
+            :key="membership.coach.id"
+            :value="membership"
         >
           {{ membership.label }}
         </option>
@@ -21,8 +21,8 @@
     </div>
 
     <div
-      v-if="availableDates.length > 0 || isLoadingDates"
-      class="date-selection"
+        v-if="availableDates.length > 0 || isLoadingDates"
+        class="date-selection"
     >
       <h3>Обіріть дату</h3>
 
@@ -32,11 +32,11 @@
 
       <div v-else class="dates">
         <div
-          v-for="date in availableDates"
-          :key="date"
-          class="date-block"
-          @click="selectDate(date)"
-          :class="{ active: selectedDate === date }"
+            v-for="date in availableDates"
+            :key="date"
+            class="date-block"
+            @click="selectDate(date)"
+            :class="{ active: selectedDate === date }"
         >
           {{ formatDate(date) }}
         </div>
@@ -52,11 +52,11 @@
 
       <div v-else class="times">
         <div
-          v-for="slot in allSlots"
-          :key="slot.id"
-          class="time-slot"
-          :class="{ booked: slot.isBooked }"
-          @click="!slot.isBooked && openModal(slot)"
+            v-for="slot in allSlots"
+            :key="slot.id"
+            class="time-slot"
+            :class="{ booked: slot.isBooked }"
+            @click="!slot.isBooked && openModal(slot)"
         >
           {{ slot.time }}
         </div>
@@ -64,31 +64,31 @@
     </div>
 
     <CustomModal
-      :visible="showModal"
-      title="Підтвердіть бронювання"
-      @close="closeModal"
-      :persistent="true"
+        :visible="showModal"
+        title="Підтвердіть бронювання"
+        @close="closeModal"
+        :persistent="true"
     >
       <template #default>
         <p>
-          <strong>Coach:</strong>
+          <strong>Тренер:</strong>
           {{ selectedMembership?.coach?.coachName }}
           {{ selectedMembership?.coach?.coachSurname }}
         </p>
-        <p><strong>Date:</strong> {{ formatDate(selectedSlot?.fullDate) }}</p>
-        <p><strong>Time:</strong> {{ selectedSlot?.time }}</p>
+        <p><strong>Дата:</strong> {{ formatDate(selectedSlot?.fullDate) }}</p>
+        <p><strong>Час:</strong> {{ selectedSlot?.time }}</p>
 
         <div
-          v-if="!isMembershipActiveOnDate(selectedSlot?.fullDate)"
-          class="expired"
+            v-if="!isMembershipActiveOnDate(selectedSlot?.fullDate)"
+            class="expired"
         >
           <p>Ваш абонемент буде вже недійсний цього дня.</p>
           <button class="modal-btn" @click="closeModal">Close</button>
         </div>
 
         <div
-          v-if="!isGymMembershipActiveOnDate(selectedSlot?.fullDate)"
-          class="expired"
+            v-if="!isGymMembershipActiveOnDate(selectedSlot?.fullDate)"
+            class="expired"
         >
           <p>
             Ваш абонемент доступу до спортзалу буде вже недійсний цього дня.
@@ -97,7 +97,7 @@
         </div>
 
         <div
-          v-else-if="
+            v-else-if="
             isGymMembershipActiveOnDate(selectedSlot?.fullDate) &&
             isMembershipActiveOnDate(selectedSlot?.fullDate)
           "
@@ -109,10 +109,10 @@
     </CustomModal>
 
     <CustomModal
-      :visible="showResultModal"
-      :title="bookingResult.success ? 'Успішно' : 'Помилка'"
-      @close="closeResultModal"
-      :persistent="true"
+        :visible="showResultModal"
+        :title="bookingResult.success ? 'Успішно' : 'Помилка'"
+        @close="closeResultModal"
+        :persistent="true"
     >
       <template #default>
         <p>{{ bookingResult.message }}</p>
@@ -120,10 +120,10 @@
       </template>
     </CustomModal>
     <CustomModal
-      :visible="showWarningModal"
-      title="Увага"
-      @close="showWarningModal = false"
-      :persistent="true"
+        :visible="showWarningModal"
+        title="Увага"
+        @close="showWarningModal = false"
+        :persistent="true"
     >
       <template #default>
         <p>
@@ -187,13 +187,13 @@ const generateNextDates = async () => {
 
     while (result.length < 28) {
       const day = date.getDay();
-      if (day !== 0) {
+      if (day !== 0 && day !== 6) {
         result.push(date.toISOString().split("T")[0]);
       }
       date.setDate(date.getDate() + 1);
     }
 
-    availableDates.value = result.slice(0, 28);
+    availableDates.value = result;
   } finally {
     isLoadingDates.value = false;
   }
@@ -207,9 +207,10 @@ const fetchSchedule = async () => {
 
   try {
     const res = await axios.get(
-      `/gymfit/workouts/all-for-coach/${selectedMembership.value.coach.id}`,
-      { params: { date: selectedDate.value } },
+        `/gymfit/workouts/all-for-coach/${selectedMembership.value.coach.id}`,
+        { params: { date: selectedDate.value } },
     );
+    console.log(res.data);
     allSlots.value = res.data.map((slot) => ({
       ...slot,
       fullDate: slot.workoutDate,
@@ -243,7 +244,7 @@ const openModal = (slot) => {
   const workoutDate = slot.fullDate;
 
   const isInvalidGymMembership =
-    !gymMembership.value || gymMembership.value.type !== "ALL_DAY_PASS";
+      !gymMembership.value || gymMembership.value.type !== "ALL_DAY_PASS";
 
   if (isInvalidGymMembership) {
     showWarningModal.value = true;
@@ -283,7 +284,7 @@ const confirmBooking = async () => {
 
   try {
     await axios.post(
-      `/gymfit/booking/book/${selectedSlot.value.id}?membershipId=${selectedMembership.value.id}`,
+        `/gymfit/booking/book/${selectedSlot.value.id}?membershipId=${selectedMembership.value.id}`,
     );
 
     bookingResult.value = {
