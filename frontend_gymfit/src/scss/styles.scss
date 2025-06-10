@@ -1,0 +1,42 @@
+$fit-highlight: #23afa3;
+
+.fit-highlight{
+  color:$fit-highlight;
+}
+
+.fit-btn{
+  border:2px solid;
+  color:$fit-highlight;
+}
+
+.fit-btn:hover{
+  color: #1a1a1a;
+  background-color: $fit-highlight;
+}
+
+@mixin button-style($bg, $color) {
+  background: $bg;
+  color: $color;
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 0.8rem;
+  font-weight: 600;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: background 0.3s ease;
+
+  &:hover {
+    background: lighten($bg, 10%);
+  }
+}
+
+@mixin icon-color($bg){
+  color: $bg;
+  font-size: 2.5rem;
+  cursor: pointer;
+
+  &:hover {
+   color: lighten($bg, 10%);
+  }
+
+}
